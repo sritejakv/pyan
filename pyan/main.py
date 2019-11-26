@@ -9,6 +9,7 @@
     for rendering by e.g. GraphViz or yEd.
 """
 
+import os
 import logging
 from glob import glob
 from optparse import OptionParser  # TODO: migrate to argparse
@@ -110,6 +111,10 @@ def main():
     graph = VisualGraph.from_visitor(v, options=graph_options, logger=logger)
 
     if options.dot:
+        dir_path = os.sep.join(options.filename.split(os.sep)[:-1])
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
         writer = DotWriter(
                 graph,
                 options=['rankdir='+options.rankdir],
