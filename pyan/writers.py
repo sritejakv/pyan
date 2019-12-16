@@ -43,6 +43,7 @@ class Writer(object):
         self.start_subgraph(graph)
         for node in graph.nodes:
             self.write_node(node)
+        self.write_runtime()
         for subgraph in graph.subgraphs:
             self.write_subgraph(subgraph)
         self.finish_subgraph(graph)
@@ -52,6 +53,9 @@ class Writer(object):
         for edge in self.graph.edges:
             self.write_edge(edge)
         self.finish_edges()
+
+    def write_runtime(self):
+        pass
 
     def start_graph(self):
         pass
@@ -104,7 +108,7 @@ class TgfWriter(Writer):
 
 class DotWriter(Writer):
     def __init__(self, graph,
-                 options=None, output=None, logger=None, tabstop=4):
+                 options=None, output=None, logger=None, run_time=None, tabstop=4):
         Writer.__init__(
                 self, graph,
                 output=output,
@@ -115,6 +119,7 @@ class DotWriter(Writer):
             options += ['clusterrank="local"']
         self.options = ', '.join(options)
         self.grouped = graph.grouped
+        self.run_time = run_time
 
     def start_graph(self):
         self.write('digraph G {')
@@ -149,6 +154,15 @@ class DotWriter(Writer):
             % (
                 node.id, node.label,
                 node.fill_color, node.text_color, node.group))
+
+    def write_runtime(self):
+        self.log('Writing runtime %s' % self.run_time)
+        self.write(
+            '%s [label="%s", style="invis"];'
+            % (
+                "pyan_run_time", self.run_time,
+                )
+        )
 
     def write_edge(self, edge):
         source = edge.source

@@ -11,6 +11,7 @@
 
 import os
 import logging
+import timeit
 from glob import glob
 from optparse import OptionParser  # TODO: migrate to argparse
 
@@ -107,9 +108,11 @@ def main():
         handler = logging.FileHandler(options.logname)
         logger.addHandler(handler)
 
+    import time
+    start_time = time.time()
     v = CallGraphVisitor(filenames, logger)
+    run_time = time.time() - start_time
     graph = VisualGraph.from_visitor(v, options=graph_options, logger=logger)
-
     if options.dot:
         dir_path = os.sep.join(options.filename.split(os.sep)[:-1])
         if not os.path.exists(dir_path):
@@ -119,7 +122,8 @@ def main():
                 graph,
                 options=['rankdir='+options.rankdir],
                 output=options.filename,
-                logger=logger)
+                logger=logger,
+                run_time=run_time)
         writer.run()
 
     if options.tgf:
