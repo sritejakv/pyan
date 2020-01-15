@@ -19,6 +19,22 @@ from .analyzer import CallGraphVisitor
 from .visgraph import VisualGraph
 from .writers import TgfWriter, DotWriter, YedWriter
 
+
+def prune_filenames(filenames):
+    pruned_files = []
+    logger = logging.getLogger(__name__)
+    import pdb
+    for file in filenames:
+        try:
+            v = CallGraphVisitor([file], logger)
+            pruned_files.append(file)
+        except ValueError as e:
+            print("Exception %s in file %s" % (e, file))
+        except AttributeError as e:
+            print("Exception %s in file %s" % (e, file))
+    return pruned_files
+
+
 def main():
     usage = """usage: %prog FILENAME... [--dot|--tgf|--yed]"""
     desc = ('Analyse one or more Python source files and generate an'
@@ -107,6 +123,9 @@ def main():
     if options.logname:
         handler = logging.FileHandler(options.logname)
         logger.addHandler(handler)
+
+    pruned_filenames = prune_filenames(filenames)
+    filenames = pruned_filenames
 
     import time
     start_time = time.time()
