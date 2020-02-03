@@ -23,15 +23,13 @@ from .writers import TgfWriter, DotWriter, YedWriter
 def prune_filenames(filenames):
     pruned_files = []
     logger = logging.getLogger(__name__)
-    import pdb
     for file in filenames:
         try:
             v = CallGraphVisitor([file], logger)
             pruned_files.append(file)
-        except ValueError as e:
+        except Exception as e:
             print("Exception %s in file %s" % (e, file))
-        except AttributeError as e:
-            print("Exception %s in file %s" % (e, file))
+            continue
     return pruned_files
 
 

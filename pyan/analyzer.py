@@ -536,7 +536,7 @@ class CallGraphVisitor(ast.NodeVisitor):
             self.analyze_binding(targets, values)
 
     def visit_AnnAssign(self, node):
-        self.visit_Assign(self, node)  # TODO: alias for now; add the annotations to output in a future version?
+        self.visit_Assign(node)  # TODO: alias for now; add the annotations to output in a future version?
 
     def visit_AugAssign(self, node):
         targets = sanitize_exprs(node.target)
@@ -1460,8 +1460,7 @@ class CallGraphVisitor(ast.NodeVisitor):
         # What about incoming uses edges? E.g. consider a lambda that is saved
         # in an instance variable, then used elsewhere. How do we want the
         # graph to look like in that case?
-
-        for name in self.nodes:
+        for name in list(self.nodes):
             if name in ('lambda', 'listcomp', 'setcomp', 'dictcomp', 'genexpr'):
                 for n in self.nodes[name]:
                     pn = self.get_parent_node(n)
