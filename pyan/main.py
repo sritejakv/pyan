@@ -88,9 +88,13 @@ def main():
                         "controlling the direction of the graph. "
                         "Allowed values: ['TB', 'LR', 'BT', 'RL']. "
                         "[dot only]"))
+    parser.add_option("--pruneEP", "--pruneEntryPoints", action="store_true", default=False, dest="prune_entry_points",
+                      help="Output the files that are run successfully from the input passed")
     parser.add_option("-a", "--annotated",
                       action="store_true", default=False, dest="annotated",
                       help="annotate with module and source line number")
+    parser.add_option("--rlib", "--library", dest="real_world_lib",
+                      help="write graph to FILE", metavar="FILE", default=None)
 
     options, args = parser.parse_args()
     filenames = [fn2 for fn in args for fn2 in glob(fn)]
@@ -124,6 +128,13 @@ def main():
 
     pruned_filenames = prune_filenames(filenames)
     filenames = pruned_filenames
+
+    if options.prune_entry_points:
+        lib_file_name = "%s.txt" % options.real_world_lib
+        with open(lib_file_name, "w+") as f:
+            for filename in pruned_filenames:
+                f.write(filename + "\n")
+        return
 
     import time
     start_time = time.time()
