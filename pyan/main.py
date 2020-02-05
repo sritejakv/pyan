@@ -26,7 +26,7 @@ def prune_filenames(filenames):
     for file in filenames:
         try:
             v = CallGraphVisitor([file], logger)
-            pruned_files.append(file)
+            pruned_files.append(os.path.abspath(file))
         except Exception as e:
             print("Exception %s in file %s" % (e, file))
             continue
@@ -126,11 +126,10 @@ def main():
         handler = logging.FileHandler(options.logname)
         logger.addHandler(handler)
 
-    pruned_filenames = prune_filenames(filenames)
-    filenames = pruned_filenames
-
     if options.prune_entry_points:
-        lib_file_name = "%s.txt" % options.real_world_lib
+        pruned_filenames = prune_filenames(filenames)
+
+        lib_file_name = options.real_world_lib
         with open(lib_file_name, "w+") as f:
             for filename in pruned_filenames:
                 f.write(filename + "\n")
