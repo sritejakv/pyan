@@ -138,8 +138,8 @@ def main():
 
         lib_name = lib_file_name.split("/")[-1]
 
-        exp_file_name = lib_file_name.split("prunedEntryPoints")[0] + lib_name.split("PrunedEntryPoints.txt",
-                                                                                     "EntryPointExceptions.txt")
+        exp_file_name = lib_file_name.split("prunedEntryPoints")[0] + lib_name.replace("PrunedEntryPoints.txt",
+                                                                                       "EntryPointExceptions.txt")
         with open(exp_file_name, "w+") as f:
             for e in exceptions_occured:
                 f.write(e + "\n")
