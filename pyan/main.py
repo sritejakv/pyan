@@ -22,6 +22,7 @@ from .writers import TgfWriter, DotWriter, YedWriter
 
 def prune_filenames(filenames):
     pruned_files = []
+    exceptions_occured = []
     logger = logging.getLogger(__name__)
     for file in filenames:
         try:
@@ -29,8 +30,9 @@ def prune_filenames(filenames):
             pruned_files.append(os.path.abspath(file))
         except Exception as e:
             print("Exception %s in file %s" % (e, file))
+            exceptions_occured.append("Exception %s in file %s" % (e, file))
             continue
-    return pruned_files
+    return pruned_files, exceptions_occured
 
 
 def main():
@@ -127,12 +129,20 @@ def main():
         logger.addHandler(handler)
 
     if options.prune_entry_points:
-        pruned_filenames = prune_filenames(filenames)
+        pruned_filenames, exceptions_occured = prune_filenames(filenames)
 
         lib_file_name = options.real_world_lib
         with open(lib_file_name, "w+") as f:
             for filename in pruned_filenames:
                 f.write(filename + "\n")
+
+        lib_name = lib_file_name.split("/")[-1]
+
+        exp_file_name = lib_file_name.split("prunedEntryPoints")[0] + lib_name.split("PrunedEntryPoints.txt",
+                                                                                     "EntryPointExceptions.txt")
+        with open(exp_file_name, "w+") as f:
+            for e in exceptions_occured:
+                f.write(e + "\n")
         return
 
     import time
