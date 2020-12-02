@@ -145,10 +145,10 @@ def main():
                 f.write(e + "\n")
         return
 
-    import time
-    start_time = time.time()
+    from datetime import datetime
+    start_time = datetime.now()
     v = CallGraphVisitor(filenames, logger)
-    run_time = time.time() - start_time
+    run_time = (datetime.now() - start_time).total_seconds()
     graph = VisualGraph.from_visitor(v, options=graph_options, logger=logger)
     if options.dot:
         dir_path = os.sep.join(options.filename.split(os.sep)[:-1])
